@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import http.Connection;
@@ -60,8 +61,32 @@ public class Request2hex {
             throw new Exception("socket未打开");
         }
         //直接遍历Request的头就行
-        request.getHeaders()
-
+        HashMap<String, String> headers = request.getHeaders();
+        
+        //httpHeader用来发送的http头部。
+        StringBuilder httpHeader = new StringBuilder();
+        
+        
+        //GET /PCcontrolServer/ImageGet?pwd=5678 HTTP/1.1
+        //首先是对方法的判断,先只支持get和post方法
+        URL url = connection.getUrl();
+        if(request.getMethod().equals("get")
+        		||request.getMethod().equals("GET")){
+        	
+        	httpHeader.append("GET " + url.getPath()+"?"
+        			+url.getQuery() + " HTTP/1.1\r\n");
+        	
+        }else if(request.getMethod().equals("POST")||
+        		request.getMethod().equals("post")){
+        	httpHeader.append("POST " + url.getPath() + "HTTP/1.1\r\n");
+        }
+        
+        //其次对其他header头参数进行拼接。其中contentlength这个只有post方法才支持。要独立判断
+        
+        
+        
+        
+        
 
 
 //        URL url = connection.getUrl();

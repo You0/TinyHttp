@@ -103,11 +103,11 @@ public class Request {
                 headers.put("Host",getUrl().getHost());
             }
 
-            if(method.equals("get")){
-
-            }else{
-
-            }
+//            if(method.equals("get")){
+//            	
+//            }else{
+//
+//            }
 
 
 
