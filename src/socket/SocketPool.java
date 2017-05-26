@@ -5,6 +5,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -25,7 +26,7 @@ public class SocketPool {
     //用来管理socket连接的任务池， 运行清理任务，一般来说是个单任务线程，考虑到扩展就使用线程池
     //因为线程池的开销好像并不大。
     private static final Executor mExecutor = new ThreadPoolExecutor(1,Integer.MAX_VALUE,
-            60, TimeUnit.SECONDS,new ArrayBlockingQueue<Runnable>(Integer.MAX_VALUE),
+            60, TimeUnit.SECONDS,new SynchronousQueue<Runnable>(),
             Utils.threadFactor("socket Pool",false));
 
     //允许当前socket最长的空闲时间
@@ -66,15 +67,33 @@ public class SocketPool {
         this.maxIdletime = maxIdletime;
         this.maxIdleConnections = maxIdleConnections;
     }
+    
+    
+    public void addConnection(Connection connection){
+    	//每次加入新的socket就重新执行清理任务。(先判断是否已经执行了，如果正在执行就不执行)
+    	mLinkedList.add(connection);
+    	if(!cleanisRuing){
+    		mExecutor.execute(cleanTask);
+    	}
+    }
+    
+    
+    
+    
 
     //先查询一下是否有已经存在的socket进行复用。
     public Connection getConnection(String addr,int port)
     {
         //对已经存在的URL进行遍历找出是否已经存在
         for(int i=0;i<mLinkedList.size();i++){
-            if(mLinkedList.get(i).getAddr().toString().equals("addr")
+            if(mLinkedList.get(i).getAddr().toString().equals(addr)
                     &&mLinkedList.get(i).getPort()==port){
                 //将connection返回复用。
+            	if(mLinkedList.get(i).isUsing==false){
+            		mLinkedList.get(i).isUsing = true;
+            	}else{
+            		return null;
+            	}
                 return mLinkedList.get(i);
             }
         }

@@ -41,7 +41,7 @@ public class Request {
         return headers;
     }
 
-    public class Builder{
+    public static class Builder{
         private String url;
         private int port;
         private String method;
@@ -52,6 +52,7 @@ public class Request {
             this.url = url;
             return this;
         }
+        
 
         public Builder post(){
             this.method = "post";
@@ -79,7 +80,7 @@ public class Request {
         }
 
 
-        public Request build() throws MalformedURLException {
+        public Request build() throws Exception {
             Request request = new Request();
             request.url = new URL(url);
             request.headers = headers;
@@ -100,7 +101,7 @@ public class Request {
             }
 
             if(headers.get("Host")==null){
-                headers.put("Host",getUrl().getHost());
+                headers.put("Host",request.url.getHost());
             }
 
 //            if(method.equals("get")){

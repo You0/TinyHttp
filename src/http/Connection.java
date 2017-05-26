@@ -18,6 +18,11 @@ public class Connection {
 
     long IdleTime;
     //进入空闲状态时的时间
+    
+    public Connection(Socket socket,URL url){
+    	this.socket = socket;
+    	this.url = url;
+    }
 
 
     public Socket getSocket() {

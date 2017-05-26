@@ -28,9 +28,9 @@ public class Dispatcher {
 
     private LinkedList<AnsyCall> Dequeue = new LinkedList<>();
     //当前正在运行的task
-    private volatile AtomicInteger runningTasks;
+    private volatile AtomicInteger runningTasks = new AtomicInteger(0);
     //初始化socket管理池，其任务是清除空闲的socket
-    private SocketPool socketPool = new SocketPool(5*60*1000,5);
+    public SocketPool socketPool = new SocketPool(5*60*1000,5);
 
 
     //真正进行http数据发送的连接池
@@ -72,47 +72,47 @@ public class Dispatcher {
 
 
     //异步任务
-    class AnsyCall implements Runnable{
-        private CallBack callBack;
-        private Request request;
-        private Connection connection;
-        public AnsyCall(Request request){
-            this.request = request;
-        }
-
-
-        //异步任务，把自己放入队列中执行
-        public void enqueue(CallBack callBack){
-            this.callBack = callBack;
-            Dispatcher.getInstance().dispatch(this);
-        }
-
-        //同步开始
-        public void start(){
-            this.start();
-        }
-
-
-        @Override
-        public void run() {
-            //拿到socket，发送requet请求，拿到response然后处理成response对象，
-            //根据response对象调用callback的success方法或者error方法。(先判断callback是否是null)
-            try{
-
-                //code....
-
-
-
-            }catch (Exception e){
-                //ignore
-            }finally {
-                //一定要调用finish方法开始把下一个任务加入到线程池中。
-                Dispatcher.getInstance().finish();
-                OverControl.release(connection);
-            }
-
-        }
-    }
+//    public class AnsyCall implements Runnable{
+//        private CallBack callBack;
+//        private Request request;
+//        private Connection connection;
+//        public AnsyCall(Request request){
+//            this.request = request;
+//        }
+//
+//
+//        //异步任务，把自己放入队列中执行
+//        public void enqueue(CallBack callBack){
+//            this.callBack = callBack;
+//            Dispatcher.getInstance().dispatch(this);
+//        }
+//
+//        //同步开始
+//        public void start(){
+//            this.start();
+//        }
+//
+//
+//        @Override
+//        public void run() {
+//            //拿到socket，发送requet请求，拿到response然后处理成response对象，
+//            //根据response对象调用callback的success方法或者error方法。(先判断callback是否是null)
+//            try{
+//
+//                //code....
+//            	
+//
+//
+//            }catch (Exception e){
+//                //ignore
+//            }finally {
+//                //一定要调用finish方法开始把下一个任务加入到线程池中。
+//                Dispatcher.getInstance().finish();
+//                OverControl.release(connection);
+//            }
+//
+//        }
+//    }
 
     //异步任务完成之后将调用的回调任务。
     public interface CallBack{

@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import com.sun.swing.internal.plaf.metal.resources.metal_zh_TW;
 
 import http.Connection;
 
@@ -19,6 +18,7 @@ import http.Connection;
  */
 //将Request对象变成流对象发送给服务器。
 //自己使用raw文本拼接http协议
+//目前还不支持https协议，等之后支持之后将放在其他的类里面
 public class Request2hex {
     private Connection connection;
     private Request request;
@@ -52,12 +52,13 @@ public class Request2hex {
         //拿到输出流,开始对socket进行写入
         try {
             outputStream = connection.getSocket().getOutputStream();
+            inputStream = connection.getSocket().getInputStream();
         } catch (IOException e) {
             e.printStackTrace();
         }
         //开始链接。
         httpHeader(request.getMethod());
-
+        postBody();
 
     }
 
@@ -147,6 +148,8 @@ public class Request2hex {
     		throw new IOException();
     	}
     	
+    	
+    	
     	//发送用异常包出来
     	try{
     		int size = request.getFiles().keySet().size();
@@ -154,6 +157,9 @@ public class Request2hex {
     		//先把文本字段写出去
     		outputStream.write(textPlains.toString().getBytes());
     		
+    		if(request.getMethod().equals("get")){
+        		return;
+        	}
     		
     		UploadFiles();
     		

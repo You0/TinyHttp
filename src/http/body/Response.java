@@ -5,4 +5,26 @@ package http.body;
  */
 
 public class Response {
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
