@@ -10,7 +10,7 @@ public class Test {
 		try {
 			Request request = new Request.Builder()
 					.get()
-					.url("http://115.159.159.65:8080")
+					.url("http://www.rsks.czs.gov.cn:80")
 					.build();
 		
 			AnsyCall call = new AnsyCall(request);

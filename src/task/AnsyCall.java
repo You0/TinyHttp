@@ -1,6 +1,7 @@
 package task;
 
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
@@ -46,10 +47,12 @@ public class AnsyCall implements Runnable{
         	
         	//如果没有复用的socket就新建一个。
         	if(connection == null){
-        		int port = url.getPort() == -1 ? 8080 : url.getPort();
-        		SocketAddress address = new InetSocketAddress(url.getHost(), port);
-        		Socket socket = new Socket();
-        		socket.connect(address, 5000);
+        		int port = url.getPort() == -1 ? 80 : url.getPort();
+        		//SocketAddress address = new InetSocketAddress(url.getHost(), port);
+        		InetAddress nInetAddress = InetAddress.getByName(url.getHost());
+        		System.out.println(nInetAddress.getHostAddress());
+        		Socket socket = new Socket(nInetAddress,port);
+        		//socket.connect(nInetAddress, 5000);
         		
         		//socket.getOutputStream();
         		
