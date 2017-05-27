@@ -5,12 +5,15 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.URL;
 
+import http.body.Request2hex;
+
 /**
  * Created by Me on 2017/5/14.
  */
 
 public class Connection {
     private Socket socket;
+    private Request2hex reallyCall;
     public boolean isUsing = false;
     private URL url;
 
@@ -23,7 +26,17 @@ public class Connection {
     	this.socket = socket;
     	this.url = url;
     }
+    
+    
+    public Request2hex getReallyCall() {
+		return reallyCall;
+	}
 
+    
+    public void setReallyCall(Request2hex reallyCall) {
+		this.reallyCall = reallyCall;
+	}
+    
 
     public Socket getSocket() {
         return socket;
@@ -37,13 +50,19 @@ public class Connection {
         IdleTime = System.currentTimeMillis();
     }
 
-    public boolean isIdel(){
-        return false;
+    public boolean isUsing(){
+        return isUsing;
     }
 
     //对连接进行释放,关闭socket连接。
     public boolean release(){
         try {
+        	if(reallyCall.getInputStream()!=null){
+        		reallyCall.getInputStream().close();
+        	}
+        	if(reallyCall.getOutputStream()!=null){
+        		reallyCall.getInputStream().close();
+        	}
             socket.close();
             return true;
         } catch (IOException e) {

@@ -35,6 +35,17 @@ public class localSocketTest {
 			socket.connect(address, 5000);
 			OutputStream s = socket.getOutputStream();
 			s.write(new byte[]{'b'});
+			//socket.shutdownOutput();
+			System.out.println("Êä³öÁ÷");
+			OutputStream stream = socket.getOutputStream();
+			
+			System.out.println(stream==s);
+			
+			socket.close();
+			System.gc();
+			socket.getInputStream();
+			System.out.println(stream==s);
+			
 		}catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();

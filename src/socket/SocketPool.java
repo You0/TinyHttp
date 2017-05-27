@@ -35,7 +35,7 @@ public class SocketPool {
     private int maxIdleConnections;
     private boolean cleanisRuing = false;
     //用于保存connection连接的引用
-    public static LinkedList<Connection> mLinkedList = new LinkedList<>();
+    public LinkedList<Connection> mLinkedList = new LinkedList<>();
 
 
     private Runnable cleanTask = new Runnable() {
@@ -50,7 +50,7 @@ public class SocketPool {
                 }else{
                     //使用类锁，设计上只有一个清理任务长时间驻存在线程池，
                     //但是还是加个锁，规范一下。
-                    synchronized(SocketPool.class){
+                    synchronized(SocketPool.this){
                         try {
                             SocketPool.this.wait(Millis);
                         } catch (InterruptedException e) {
@@ -115,7 +115,7 @@ public class SocketPool {
         for(int i=0;i<mLinkedList.size();i++)
         {
             Connection connection = mLinkedList.get(i);
-            if(connection.isIdel()){
+            if(connection.isUsing()){
                 inUseConnection++;
             }else{
                 idelConnectionSize++;

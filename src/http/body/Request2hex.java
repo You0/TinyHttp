@@ -58,9 +58,21 @@ public class Request2hex {
         }
         //开始链接。
         httpHeader(request.getMethod());
-        postBody();
-
+        if(request.getMethod().equals("post")||request.getMethod().equals("POST")){
+        	postBody();
+        }
+        
+        outputStream.flush();
     }
+    
+    
+    public OutputStream getOutputStream() {
+		return outputStream;
+	}
+    
+    public InputStream getInputStream() {
+		return inputStream;
+	}
 
 
 
@@ -93,9 +105,13 @@ public class Request2hex {
         if(request.getMethod().equals("get")
         		||request.getMethod().equals("GET")){
         	
-        	httpHeader.append("GET " + url.getPath()+"?"
-        			+url.getQuery() + " HTTP/1.1\r\n");
-        	
+        	if(url.getQuery()!=null){
+        		httpHeader.append("GET " + url.getPath()+"?"
+            			+url.getQuery() + " HTTP/1.1\r\n");
+        	}else{
+        		httpHeader.append("GET /" + url.getPath()+" HTTP/1.1\r\n");
+        	}
+
         }else if(request.getMethod().equals("POST")||
         		request.getMethod().equals("post")){
         	httpHeader.append("POST " + url.getPath() + "HTTP/1.1\r\n");
@@ -120,6 +136,10 @@ public class Request2hex {
         			": " + current.getValue() + "\r\n");
         }
         
+        System.out.println(httpHeader.toString());
+        
+        //这个/r/n表示消息头结束，否则服务器会一直阻塞在那里不会将结果返回。
+        httpHeader.append("\r\n");
         //将Http头写入socket，发起http请求
         outputStream.write(httpHeader.toString().getBytes());
         
