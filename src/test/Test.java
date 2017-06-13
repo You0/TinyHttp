@@ -10,29 +10,29 @@ public class Test {
 		try {
 			Request request = new Request.Builder()
 					.get()
-					.url("http://www.rsks.czs.gov.cn:80")
+					.url("https://sfault-avatar.b0.upaiyun.com:80/201/609/2016092678-54780cea05ad3_big64")
 					.build();
 		
 			AnsyCall call = new AnsyCall(request);
 			
-			//Òì²½¿ªÊ¼
+			//ï¿½ì²½ï¿½ï¿½Ê¼
 			call.enqueue(new CallBack() {
 				
 				@Override
 				public void Success(Response response) {
 					// TODO Auto-generated method stub
-					System.out.println("·ÃÎÊ³É¹¦");
+					System.out.println("ï¿½ï¿½ï¿½Ê³É¹ï¿½");
 				}
 				
 				@Override
 				public void Error(Response response) {
 					// TODO Auto-generated method stub
-					System.out.println("·ÃÎÊÊ§°Ü");
+					System.out.println("ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½");
 				}
 			});
 			
 			
-			//Í¬²½¿ªÊ¼
+			//Í¬ï¿½ï¿½ï¿½ï¿½Ê¼
 			//call.start();
 			
 		
