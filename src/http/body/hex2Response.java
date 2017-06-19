@@ -36,18 +36,18 @@ public class hex2Response {
 	public void hex2Str()
 	{
 		try{
-//			byte[] bytes = Utils.toByteArray(ins);
+			byte[] bytes = Utils.toByteArray(ins);
 //			
 //			
 //			//·Ö¸îheaderºÍbody
 //			departHeadAndBody(bytes);
 			
-			BufferedReader reader = new BufferedReader(new InputStreamReader(ins, code));
-			String line;
-			while((line = reader.readLine())!=null){
-				System.out.println(line);
-				//System.out.println(line.getBytes());
-			}
+//			BufferedReader reader = new BufferedReader(new InputStreamReader(ins, code));
+//			String line;
+//			while((line = reader.readLine())!=null){
+//				System.out.println(line);
+//				//System.out.println(line.getBytes());
+//			}
 			
 			//åˆ†ç¦»httpä¸­headerå’Œbody
 			
