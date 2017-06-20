@@ -49,6 +49,10 @@ public class Connection {
     public void setIdelTime() {
         IdleTime = System.currentTimeMillis();
     }
+    
+    public void setIdelTime(long usr) {
+        IdleTime = usr;
+    }
 
     public boolean isUsing(){
         return isUsing;

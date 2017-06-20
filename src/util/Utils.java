@@ -32,6 +32,7 @@ public class Utils {
     
     //利用bytearrayOutStream将input转化成byte数组
     public static byte[] toByteArray(InputStream input,hex2Response response) throws IOException{
+    	ArrayList<String> headerStr = new ArrayList<>();
     	ByteArrayOutputStream outputStream=new ByteArrayOutputStream();
     	byte[] patter = "\r\n".getBytes();
     	byte[] bs= new byte[512];
@@ -58,11 +59,13 @@ public class Utils {
 								stringBuilder.append((char)(CurrentLine.get(j).byteValue()));
 							}
 							String line = stringBuilder.toString();
-							System.out.println(line);
+							//System.out.println(line);
+							//将http头保存到list里，不需要再自己解析
+							headerStr.add(line);
 							if(contentlen == -1){
 								contentlen = findContentLength(line);
 							}
-							System.out.println(line.length());
+							//System.out.println(line.length());
 							if(line.length()==0){
 								flag=true;
 								break;
@@ -78,9 +81,10 @@ public class Utils {
 				}
 				
 			}else{
+				response.setHeaderStr(headerStr);
 				response.setHeadlen(headlen);
 				response.setBodylen(contentlen);
-				System.out.println("HeadLen:"+headlen+";"+"contentlen:"+contentlen);
+				//System.out.println("HeadLen:"+headlen+";"+"contentlen:"+contentlen);
 			}
 		   outputStream.write(bs, 0, len);
 		   totalLen += len;

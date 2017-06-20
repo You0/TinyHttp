@@ -91,9 +91,12 @@ public class SocketPool {
                 //将connection返回复用。
             	if(mLinkedList.get(i).isUsing==false){
             		mLinkedList.get(i).isUsing = true;
+            		mLinkedList.get(i).setIdelTime(0);;
             	}else{
             		return null;
             	}
+            	//TODO 复用就sysout一下通知
+            	System.out.println("复用一个socket");
                 return mLinkedList.get(i);
             }
         }

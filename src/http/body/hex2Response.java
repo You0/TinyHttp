@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import util.Utils;
@@ -16,14 +17,17 @@ import util.Utils;
  */
 
 public class hex2Response {
-	private Response response;
 	private InputStream ins;
 	private String code = "UTF-8";
 	private byte[] body;
 	private byte[] header;
+	private ArrayList<String> headerStr;
 	private long headlen;
 	private long bodylen;
 	
+	public void setHeaderStr(ArrayList<String> headerStr) {
+		this.headerStr = headerStr;
+	}
 	
 	public void setHeadlen(long headlen) {
 		this.headlen = headlen;
@@ -45,7 +49,7 @@ public class hex2Response {
 	
 	
 	public Response getResponse(){
-		return response;
+		return buildResponse();
 	}
 	
 	public void hex2Str()
@@ -59,27 +63,11 @@ public class hex2Response {
 		}
 
 	}
-	
-	
-	public byte[] body()
-	{
-		return body;
-	}
-	
-	public HashMap<String, String> header()
-	{
-		HashMap<String, String> map = new HashMap<>();
-		
-		
-		
-		return map;
-	}
 
-	
+
 	//利用body和http header之间有2个/r/n进行,但这个判断逻辑在转化为字节流的时候已经判断过了
 	private void departHeadAndBody(byte[] bytes) throws IOException {
 		// TODO Auto-generated method stub
-		System.out.println("divive");
 		body = new byte[(int) bodylen];
 		int j=0;
 		for(long i=headlen;i<headlen+bodylen;i++){
@@ -93,5 +81,28 @@ public class hex2Response {
 		}
 		
 	}
+	
+	
+	public Response buildResponse()
+	{
+		HashMap<String, String> map = new HashMap<>();
+		Response response = new Response();
+		//设置body
+		response.setData(body);
+		//设置data
+		response.setCode(headerStr.get(0).substring(9,11));
+		//设置response的header
+		for(int i=1;i<headerStr.size();i++){
+			String[] strs = headerStr.get(i).split(":");
+			if(strs.length<=1){
+				continue;
+			}
+			map.put(strs[0], strs[1].substring(1, strs[1].length()));
+		}
+		response.setHeaders(map);
+		return response;
+	}
+	
+	
 	
 }
