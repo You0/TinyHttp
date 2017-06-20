@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import http.body.hex2Response;
+
 /**
  * Created by Me on 2017/5/14.
  */
@@ -29,7 +31,7 @@ public class Utils {
     }
     
     //利用bytearrayOutStream将input转化成byte数组
-    public static byte[] toByteArray(InputStream input) throws IOException{
+    public static byte[] toByteArray(InputStream input,hex2Response response) throws IOException{
     	ByteArrayOutputStream outputStream=new ByteArrayOutputStream();
     	byte[] patter = "\r\n".getBytes();
     	byte[] bs= new byte[512];
@@ -39,14 +41,17 @@ public class Utils {
 		int len;
 		int divive = 0;
 		boolean flag = false;
+		int totalLen = 0;
 
-		while ((len = input.read(bs)) != -1) {  
+		while ((len = input.read(bs)) != -1) { 
+			
 			//连续2个换行则表示到了数据部分了
+			int i = 0;
 			if(!flag){
-				for(int i=0;i<len;i++){
+				for(i=0;i<len;i++){
 					if(bs[i] == patter[0]){
 						if(i!=len-1 && bs[i+1] == patter[1]){
-							
+							headlen+=2;
 							//遇到换行了将此行读出
 							StringBuilder stringBuilder = new StringBuilder();
 							for(int j=0;j<CurrentLine.size();j++){
@@ -54,12 +59,13 @@ public class Utils {
 							}
 							String line = stringBuilder.toString();
 							System.out.println(line);
-							if(contentlen!=-1){
+							if(contentlen == -1){
 								contentlen = findContentLength(line);
 							}
 							System.out.println(line.length());
 							if(line.length()==0){
 								flag=true;
+								break;
 							}
 							
 							CurrentLine.clear();
@@ -67,14 +73,21 @@ public class Utils {
 						}
 					}else{
 						CurrentLine.add(bs[i]);
+						headlen++;
 					}
 				}
-				headlen += len;
+				
 			}else{
+				response.setHeadlen(headlen);
+				response.setBodylen(contentlen);
 				System.out.println("HeadLen:"+headlen+";"+"contentlen:"+contentlen);
 			}
 		   outputStream.write(bs, 0, len);
-		}  
+		   totalLen += len;
+		   if(totalLen== (headlen+contentlen)){
+				break;
+			}
+		}
     	return outputStream.toByteArray();
     }
 

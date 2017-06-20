@@ -90,7 +90,7 @@ public class AnsyCall implements Runnable{
         }catch (Exception e){
             //这里抛出的异常是socket连接时造成的异常。
         	//回调callback的error方法。的
-        	//callBack.Error(new hex2Response().);
+        	//callBack.Error(new hex2Response().getResponse());
 
         }finally {
             //一定要调用finish方法开始把下一个任务加入到线程池中。

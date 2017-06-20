@@ -109,7 +109,7 @@ public class Request2hex {
         		httpHeader.append("GET " + url.getPath()+"?"
             			+url.getQuery() + " HTTP/1.1\r\n");
         	}else{
-        		httpHeader.append("GET /" + url.getPath()+" HTTP/1.1\r\n");
+        		httpHeader.append("GET " + url.getPath()+" HTTP/1.1\r\n");
         	}
 
         }else if(request.getMethod().equals("POST")||

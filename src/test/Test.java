@@ -10,7 +10,7 @@ public class Test {
 		try {
 			Request request = new Request.Builder()
 					.get()
-					.url("https://sfault-avatar.b0.upaiyun.com:80/201/609/2016092678-54780cea05ad3_big64")
+					.url("http://210.45.215.236:80")
 					.build();
 		
 			AnsyCall call = new AnsyCall(request);
@@ -21,13 +21,13 @@ public class Test {
 				@Override
 				public void Success(Response response) {
 					// TODO Auto-generated method stub
-					System.out.println("ï¿½ï¿½ï¿½Ê³É¹ï¿½");
+					System.out.println("·ÃÎÊ³É¹¦");
 				}
 				
 				@Override
 				public void Error(Response response) {
 					// TODO Auto-generated method stub
-					System.out.println("ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½");
+					System.out.println("·ÃÎÊÊ§°Ü");
 				}
 			});
 			
