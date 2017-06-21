@@ -75,12 +75,12 @@ public class Connection {
         return false;
     }
 
-    public SocketAddress getAddr(){
-        return socket.getRemoteSocketAddress();
+    public String getAddr(){
+        return url.getHost();
     }
 
     public int getPort(){
-        return socket.getPort();
+    	return url.getPort() == -1 ? 80 : url.getPort();
     }
 
     public URL getUrl(){

@@ -60,6 +60,7 @@ public class Utils {
 							}
 							String line = stringBuilder.toString();
 							//System.out.println(line);
+							Log.E(line);
 							//将http头保存到list里，不需要再自己解析
 							headerStr.add(line);
 							if(contentlen == -1){
@@ -80,11 +81,13 @@ public class Utils {
 					}
 				}
 				
-			}else{
+			}
+			if(flag)
+			{
 				response.setHeaderStr(headerStr);
 				response.setHeadlen(headlen);
 				response.setBodylen(contentlen);
-				//System.out.println("HeadLen:"+headlen+";"+"contentlen:"+contentlen);
+				Log.E("HeadLen:"+headlen+";"+"contentlen:"+contentlen);
 			}
 		   outputStream.write(bs, 0, len);
 		   totalLen += len;

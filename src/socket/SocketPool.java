@@ -10,6 +10,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import http.Connection;
+import util.Log;
 import util.Utils;
 
 
@@ -43,6 +44,7 @@ public class SocketPool {
         public void run() {
             cleanisRuing = true;
             while(true){
+            	Log.E("执行新一轮清理检测");
                 long Millis = cleanup(System.currentTimeMillis());
                 if(Millis==-1){
                     cleanisRuing = false;
@@ -72,9 +74,12 @@ public class SocketPool {
     public void addConnection(Connection connection){
     	//每次加入新的socket就重新执行清理任务。(先判断是否已经执行了，如果正在执行就不执行)
     	mLinkedList.add(connection);
-    	if(!cleanisRuing){
-    		mExecutor.execute(cleanTask);
-    	}
+    	synchronized (SocketPool.class) {
+    		if(!cleanisRuing){
+        		cleanisRuing = true;
+        		mExecutor.execute(cleanTask);
+        	}
+		}
     }
     
     
@@ -86,6 +91,8 @@ public class SocketPool {
     {
         //对已经存在的URL进行遍历找出是否已经存在
         for(int i=0;i<mLinkedList.size();i++){
+        	Log.E(mLinkedList.get(i).getAddr().toString()+mLinkedList.get(i).getPort()+
+        			mLinkedList.get(i).isUsing);
             if(mLinkedList.get(i).getAddr().toString().equals(addr)
                     &&mLinkedList.get(i).getPort()==port){
                 //将connection返回复用。
@@ -93,10 +100,10 @@ public class SocketPool {
             		mLinkedList.get(i).isUsing = true;
             		mLinkedList.get(i).setIdelTime(0);;
             	}else{
-            		return null;
+            		continue;
             	}
             	//TODO 复用就sysout一下通知
-            	System.out.println("复用一个socket");
+            	Log.E("复用socket");
                 return mLinkedList.get(i);
             }
         }
@@ -120,6 +127,7 @@ public class SocketPool {
             Connection connection = mLinkedList.get(i);
             if(connection.isUsing()){
                 inUseConnection++;
+                Log.E("检测到非空闲的Idle");
             }else{
                 idelConnectionSize++;
                 long gap = System.currentTimeMillis() - connection.getIdleTime();
@@ -127,15 +135,21 @@ public class SocketPool {
                     maxIdleTime = gap;
                     longestIdleConnection = connection;
                 }
+                Log.E("检测空闲的Idle，其gap为"+gap+"maxIdleConnectionsGap为"+maxIdletime);
             }
         }
 
 
         if(idelConnectionSize>maxIdleConnections || maxIdleTime >maxIdletime){
             //从队列里删除，并且释放他的资源，让他指向null防止特殊的变量槽复用情况
+        	Log.E("检测到需要清理的socket,其中最长的空闲时间为:"+maxIdleTime);
             mLinkedList.remove(longestIdleConnection);
             longestIdleConnection.release();
             longestIdleConnection = null;
+            Log.E("目前还有"+mLinkedList.size()+"的socket还存活,目前正在使用的socket："+inUseConnection
+            		+"目前闲置的socket有:"+idelConnectionSize);
+            return maxIdleTime/2;
+            
         }else{
             //没有正在使用和空闲的connection不需要进行清理。
             if(idelConnectionSize==0&&inUseConnection==0){
@@ -148,7 +162,7 @@ public class SocketPool {
                 return maxIdletime;
             }
         }
-        return -1;
+        //return -1;
     }
 
 

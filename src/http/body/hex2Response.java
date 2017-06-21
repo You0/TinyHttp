@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import util.Log;
 import util.Utils;
 
 /**
@@ -57,7 +58,6 @@ public class hex2Response {
 		try{
 			byte[] bytes = Utils.toByteArray(ins,this);
 			departHeadAndBody(bytes);
-			
 		}catch(IOException e){
 			e.printStackTrace();
 		}

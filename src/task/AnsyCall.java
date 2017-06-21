@@ -13,6 +13,7 @@ import http.body.Request2hex;
 import http.body.Response;
 import http.body.hex2Response;
 import task.Dispatcher.CallBack;
+import util.Log;
 
 public class AnsyCall implements Runnable{
     private CallBack callBack;
@@ -41,26 +42,19 @@ public class AnsyCall implements Runnable{
         //根据response对象调用callback的success方法或者error方法。(先判断callback是否是null)
         try{
         	URL url = request.getUrl();
+        	int port = url.getPort() == -1 ? 80 : url.getPort();
             //code....
         	connection = Dispatcher.getInstance().socketPool
-        			.getConnection(url.getHost(), url.getPort());
+        			.getConnection(url.getHost(), port);
         	
         	//如果没有复用的socket就新建一个。
         	if(connection == null){
-        		int port = url.getPort() == -1 ? 80 : url.getPort();
-        		//SocketAddress address = new InetSocketAddress(url.getHost(), port);
         		InetAddress nInetAddress = InetAddress.getByName(url.getHost());
         		System.out.println(nInetAddress.getHostAddress());
         		Socket socket = new Socket(nInetAddress,port);
-        		//socket.connect(nInetAddress, 5000);
-        		
-        		//socket.getOutputStream();
         		
         		connection = new Connection(socket,url);
         		connection.isUsing = true;
-        		
-        		//connection.getSocket().getInputStream();
-        		
         		OverControl.acquire(connection);
         		Dispatcher.getInstance().socketPool.addConnection(connection);
         		
@@ -74,7 +68,6 @@ public class AnsyCall implements Runnable{
         	
         	
         	
-        	//connection.getSocket().getOutputStream();
         	
         	
         	reallyCall.connect();
@@ -94,9 +87,12 @@ public class AnsyCall implements Runnable{
 
         }finally {
             //一定要调用finish方法开始把下一个任务加入到线程池中。
-            Dispatcher.getInstance().finish();
-            connection.setIdelTime();
+        	connection.setIdelTime();
             OverControl.release(connection);
+            Log.E("finally");
+            Log.E("当前connection使用完毕，待释放"+connection.isUsing());
+            Dispatcher.getInstance().finish();
+            
         }
 
     }
