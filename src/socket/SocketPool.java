@@ -45,8 +45,16 @@ public class SocketPool {
             cleanisRuing = true;
             while(true){
             	Log.E("执行新一轮清理检测");
-                long Millis = cleanup(System.currentTimeMillis());
+            	long Millis = -1;
+            	try{
+            		Millis = cleanup(System.currentTimeMillis());
+            	}catch (Exception e) {
+					e.printStackTrace();
+					break;
+				}
+                
                 if(Millis==-1){
+                	Log.E("清理线程退出");
                     cleanisRuing = false;
                     return;
                 }else{
@@ -143,11 +151,13 @@ public class SocketPool {
         if(idelConnectionSize>maxIdleConnections || maxIdleTime >maxIdletime){
             //从队列里删除，并且释放他的资源，让他指向null防止特殊的变量槽复用情况
         	Log.E("检测到需要清理的socket,其中最长的空闲时间为:"+maxIdleTime);
+        	Log.E(mLinkedList.size());
             mLinkedList.remove(longestIdleConnection);
+            Log.E(mLinkedList.size());
             longestIdleConnection.release();
             longestIdleConnection = null;
             Log.E("目前还有"+mLinkedList.size()+"的socket还存活,目前正在使用的socket："+inUseConnection
-            		+"目前闲置的socket有:"+idelConnectionSize);
+            		+"目前闲置的socket有:"+ idelConnectionSize);
             return maxIdleTime/2;
             
         }else{

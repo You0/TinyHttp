@@ -18,7 +18,7 @@ import util.Log;
 public class AnsyCall implements Runnable{
     private CallBack callBack;
     private Request request;
-    private Connection connection;
+    
     public AnsyCall(Request request){
         this.request = request;
     }
@@ -40,6 +40,7 @@ public class AnsyCall implements Runnable{
     public void run() {
         //拿到socket，发送requet请求，拿到response然后处理成response对象，
         //根据response对象调用callback的success方法或者error方法。(先判断callback是否是null)
+    	Connection connection = null;
         try{
         	URL url = request.getUrl();
         	int port = url.getPort() == -1 ? 80 : url.getPort();
@@ -55,7 +56,6 @@ public class AnsyCall implements Runnable{
         		
         		connection = new Connection(socket,url);
         		connection.isUsing = true;
-        		OverControl.acquire(connection);
         		Dispatcher.getInstance().socketPool.addConnection(connection);
         		
         	}

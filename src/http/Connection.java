@@ -86,6 +86,17 @@ public class Connection {
     public URL getUrl(){
         return url;
     }
+    
+    
+    
+    
+    @Override
+    public int hashCode() {
+    	// TODO Auto-generated method stub
+    	return super.hashCode();
+    }
+
+    
 
 
 }
