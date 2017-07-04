@@ -1,6 +1,7 @@
 package http.body;
 
 import java.io.File;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.HashMap;
@@ -9,7 +10,7 @@ import java.util.HashMap;
  * Created by Me on 2017/5/19.
  */
 
-public class Response {
+public class Response implements Serializable{
     private HashMap<String,String> headers;
     private byte[] data;
     //返回标示200 403 302这种

@@ -2,18 +2,19 @@ package task;
 
 import java.io.InputStream;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.net.URL;
 import Over.OverControl;
+import cache.CacheManager;
 import http.Connection;
 import http.body.Request;
 import http.body.Request2hex;
 import http.body.Response;
 import http.body.hex2Response;
+
 import task.Dispatcher.CallBack;
 import util.Log;
+import util.MD5;
 
 public class AnsyCall implements Runnable{
     private CallBack callBack;
@@ -63,10 +64,16 @@ public class AnsyCall implements Runnable{
         	Request2hex reallyCall = new Request2hex(connection, request);
         	
         	connection.setReallyCall(reallyCall);
+        	
         	//这里在建立reallyCall之后，进一步判断是否可以进行缓存，如果有缓存的话，直接就返回缓存。
-        	//缓存的内容以后再写
-        	
-        	
+        	String hash = MD5.getMD5(connection.getUrl().toString());
+        	Log.E(hash);
+        	Response cache = CacheManager.get(hash);
+        	if(cache != null){
+        		Log.E("命中成功!");
+        		callBack.Success(cache);
+        		return ;
+        	}
         	
         	
         	
@@ -76,10 +83,13 @@ public class AnsyCall implements Runnable{
         	//拿到输入流将这个输入流转换为response对象
         	InputStream ins = reallyCall.getInputStream();
         	Response response = new hex2Response(ins).getResponse();
-        		
+        	
+        	cache(hash,response);
+        	
+        	
         	callBack.Success(response);
-
-
+        	
+        	
         }catch (Exception e){
             //这里抛出的异常是socket连接时造成的异常。
         	//回调callback的error方法。的
@@ -96,4 +106,28 @@ public class AnsyCall implements Runnable{
         }
 
     }
+    /**
+     * 判断是否缓存,以后的逻辑都可以在这里写
+     * TODO
+     * */
+    private void cache(String hash,Response response){
+    	String content_type;
+		try {
+			content_type = response.getHeader("Content-Type");
+			if(content_type.equals("image/jpeg")){
+	    		CacheManager.set(hash,response);
+	    	}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
+    
+    
+    
+    
+    
+    
+    
 }

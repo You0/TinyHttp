@@ -13,8 +13,9 @@ public class Test {
 			public void Success(Response response) {
 				// TODO Auto-generated method stub
 				try {
-					System.out.println(response.string("utf-8"));
-					
+					//System.out.println(response.string("utf-8"));
+					String content_type = response.getHeader("Content-Type");
+					System.out.println(content_type);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -42,9 +43,21 @@ public class Test {
 					.url("http://www.cnblogs.com/ljhdo/p/5068072.html")
 					.build();
 			
+			
+			Request request2 = new Request.Builder()
+					.get()
+					.url("http://avatar.csdn.net/0/B/B/1_u010015108.jpg")
+					.build();
+			
 		
-			AnsyCall call0 = new AnsyCall(request);
+			AnsyCall call0 = new AnsyCall(request2);
 			call0.enqueue(callBack);
+			
+			Thread.sleep(3*1000);
+			
+			AnsyCall call1 = new AnsyCall(request2);
+			call1.enqueue(callBack);
+			
 //			AnsyCall call1 = new AnsyCall(request1);
 //			AnsyCall call1 = new AnsyCall(request);
 //			AnsyCall call2 = new AnsyCall(request);
@@ -60,12 +73,12 @@ public class Test {
 			
 			//call1.enqueue(callBack);
 			
-			for(int i=0;i<1000;i++){
-				call0.enqueue(callBack);
-				
-			}
-			
-			
+//			for(int i=0;i<1000;i++){
+//				call0.enqueue(callBack);
+//				
+//			}
+//			
+//			
 			
 			
 			

@@ -87,7 +87,7 @@ public class Utils {
 				response.setHeaderStr(headerStr);
 				response.setHeadlen(headlen);
 				response.setBodylen(contentlen);
-				Log.E("HeadLen:"+headlen+";"+"contentlen:"+contentlen);
+				//Log.E("HeadLen:"+headlen+";"+"contentlen:"+contentlen);
 			}
 		   outputStream.write(bs, 0, len);
 		   totalLen += len;
