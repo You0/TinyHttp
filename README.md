@@ -1,4 +1,5 @@
 # TinyHttp
+#简介
 一个小型的http库。作者慢慢完善中。。。
 
 一个Http Client，在底层复用socket，手动拼接HTTP请求，支持多线程和缓存。
@@ -6,9 +7,9 @@
 
 
 
-使用例子：
-
-			//post请求，文件上传
+#使用例子：
+```javascript
+    		//post请求，文件上传
 			Request request = new Request.Builder().post()
 					.url("http://115.159.159.65:8080/videoshare-sso/rest/info/userhead")
 					.addFile("img", new File("D:\\img25.jpg"))
@@ -42,3 +43,4 @@
 			
 			//不放入队列的话则是同步的
 			//call.start();
+```
