@@ -1,6 +1,9 @@
 package test;
 
+import java.io.File;
+
 import http.body.Request;
+import http.body.Request2hex.Listener;
 import http.body.Response;
 import task.AnsyCall;
 import task.Dispatcher.CallBack;
@@ -13,9 +16,7 @@ public class Test {
 			public void Success(Response response) {
 				// TODO Auto-generated method stub
 				try {
-					//System.out.println(response.string("utf-8"));
-					String content_type = response.getHeader("Content-Type");
-					System.out.println(content_type);
+					System.out.println(response.string("utf-8"));
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -31,55 +32,36 @@ public class Test {
 		};
 		
 		try {
-			
-			//首先新建一个request对象，用连缀的方式增加参数
-			Request request = new Request.Builder()
-					.get()
-					.url("http://115.159.159.65:8080/")
+			//post请求，文件上传
+			Request request = new Request.Builder().post()
+					.url("http://115.159.159.65:8080/videoshare-sso/rest/info/userhead")
+					.addFile("img", new File("D:\\img25.jpg"))
+					.addParam("Token", "32ef20106c4cad6cc903fe9487b371cf")
+					.addParam("username", "E41414005")
 					.build();
+			AnsyCall call = new AnsyCall(request);
 			
-			Request request1 = new Request.Builder()
-					.get()
-					.url("http://www.cnblogs.com/ljhdo/p/5068072.html")
-					.build();
+			call.setListener(new Listener(){
+				@Override
+				public void Upload(int i) {
+					//这个接口提供上传时的进度(0-100 百分比进度)，方便开发者调用,当然不设置也可以
+				}
+				
+				
+			});
 			
+			//加入队列
+			call.enqueue(callBack);
 			
+
+			//普通的get
 			Request request2 = new Request.Builder()
 					.get()
 					.url("http://avatar.csdn.net/0/B/B/1_u010015108.jpg")
 					.build();
-			
-		
+	
 			AnsyCall call0 = new AnsyCall(request2);
 			call0.enqueue(callBack);
-			
-			Thread.sleep(3*1000);
-			
-			AnsyCall call1 = new AnsyCall(request2);
-			call1.enqueue(callBack);
-			
-//			AnsyCall call1 = new AnsyCall(request1);
-//			AnsyCall call1 = new AnsyCall(request);
-//			AnsyCall call2 = new AnsyCall(request);
-//			AnsyCall call3 = new AnsyCall(request);
-//			AnsyCall call4 = new AnsyCall(request);
-//			AnsyCall call5 = new AnsyCall(request);
-//			AnsyCall call6 = new AnsyCall(request);
-//			AnsyCall call7 = new AnsyCall(request);
-//			AnsyCall call8 = new AnsyCall(request);
-//			AnsyCall call9 = new AnsyCall(request);
-//			//异步任务
-
-			
-			//call1.enqueue(callBack);
-			
-//			for(int i=0;i<1000;i++){
-//				call0.enqueue(callBack);
-//				
-//			}
-//			
-//			
-			
 			
 			
 			//不放入队列的话则是同步的

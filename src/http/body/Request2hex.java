@@ -29,7 +29,7 @@ public class Request2hex {
     private InputStream inputStream;
     private Listener listener;
     private String boundary="OCqxMF6-JxtxoMDHmoG5W5eY9MGRsTBp";
-    
+    private String endLine = "--" + boundary + "--\r\n";
     //post发送参数的时候每个参数都有自己的参数头
     private StringBuilder[] FilePlains;
     //这个文本直接自己拼接了,所以直接使用一个StringBuilder就行了。
@@ -115,13 +115,13 @@ public class Request2hex {
 
         }else if(request.getMethod().equals("POST")||
         		request.getMethod().equals("post")){
-        	httpHeader.append("POST " + url.getPath() + "HTTP/1.1\r\n");
+        	httpHeader.append("POST " + url.getPath() + " HTTP/1.1\r\n");
         
         	contentLength = CalcDataLength();
         	
         	//如果是post则默认使用这个content-Type发送
-        	httpHeader.append("Content-Type: multipart/form-data; boundary"
-        			+boundary);
+        	httpHeader.append("Content-Type: multipart/form-data; boundary="
+        			+boundary+"\r\n");
         	
         	httpHeader.append("Content-Length: " + contentLength + "\r\n");
         
@@ -184,6 +184,7 @@ public class Request2hex {
     		UploadFiles();
     		
     		
+    		outputStream.write(endLine.getBytes());
     	}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -250,7 +251,7 @@ public class Request2hex {
 			textPlains.append(text.getValue() + "\r\n");
 		}
 		//文本类型的长度
-		DataLengh += textPlains.length();
+		DataLengh += textPlains.toString().getBytes().length;
 		int i = 0;
 		//遍历上传的参数去获取计算长度长度
 		for(Entry<String,File> file : files.entrySet()){
@@ -259,15 +260,15 @@ public class Request2hex {
 			current.append("--" + boundary + "\r\n");
 			current.append("Content-Disposition: form-data; name="
 					+"\"" + file.getKey() + "\"; filename=" 
-					+ "\"" + file.getKey() + "\"" + "\r\n\r\n");
+					+ "\"" + file.getValue().getName() + "\"" + "\r\n\r\n");
 			
-			DataLengh += current.length();
+			DataLengh += current.toString().getBytes().length;
 			FilePlains[i++] = current;
 			//不要忘记最后还有2个字节的\r\n
 			DataLengh = DataLengh + file.getValue().length() + 2;
 		}
 		
-		return DataLengh;
+		return DataLengh + endLine.getBytes().length;
 	}
 	
 	

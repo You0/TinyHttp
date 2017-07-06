@@ -9,6 +9,7 @@ import cache.CacheManager;
 import http.Connection;
 import http.body.Request;
 import http.body.Request2hex;
+import http.body.Request2hex.Listener;
 import http.body.Response;
 import http.body.hex2Response;
 
@@ -19,11 +20,17 @@ import util.MD5;
 public class AnsyCall implements Runnable{
     private CallBack callBack;
     private Request request;
+    private Listener listener;
     
     public AnsyCall(Request request){
         this.request = request;
     }
 
+    
+    public void setListener(Listener listener) {
+		this.listener = listener;
+	}
+    
 
     //异步任务，把自己放入队列中执行
     public void enqueue(CallBack callBack){
@@ -62,6 +69,11 @@ public class AnsyCall implements Runnable{
         	}
         	
         	Request2hex reallyCall = new Request2hex(connection, request);
+        	
+        	if(listener!=null){
+        		reallyCall.setListener(listener);
+        	}
+        	
         	
         	connection.setReallyCall(reallyCall);
         	
@@ -114,7 +126,7 @@ public class AnsyCall implements Runnable{
     	String content_type;
 		try {
 			content_type = response.getHeader("Content-Type");
-			if(content_type.equals("image/jpeg")){
+			if(content_type!=null && content_type.equals("image/jpeg")){
 	    		CacheManager.set(hash,response);
 	    	}
 		} catch (Exception e) {
