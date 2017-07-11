@@ -59,7 +59,6 @@ public class Utils {
 								stringBuilder.append((char)(CurrentLine.get(j).byteValue()));
 							}
 							String line = stringBuilder.toString();
-							//System.out.println(line);
 							Log.E(line);
 							//将http头保存到list里，不需要再自己解析
 							headerStr.add(line);

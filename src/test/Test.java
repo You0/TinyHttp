@@ -33,25 +33,25 @@ public class Test {
 		
 		try {
 			//post请求，文件上传
-			Request request = new Request.Builder().post()
-					.url("http://115.159.159.65:8080/videoshare-sso/rest/info/userhead")
-					.addFile("img", new File("D:\\img25.jpg"))
-					.addParam("Token", "32ef20106c4cad6cc903fe9487b371cf")
-					.addParam("username", "E41414005")
-					.build();
-			AnsyCall call = new AnsyCall(request);
-			
-			call.setListener(new Listener(){
-				@Override
-				public void Upload(int i) {
-					//这个接口提供上传时的进度(0-100 百分比进度)，方便开发者调用,当然不设置也可以
-				}
-				
-				
-			});
-			
-			//加入队列
-			call.enqueue(callBack);
+//			Request request = new Request.Builder().post()
+//					.url("http://115.159.159.65:8080/videoshare-sso/rest/info/userhead")
+//					.addFile("img", new File("D:\\img25.jpg"))
+//					.addParam("Token", "32ef20106c4cad6cc903fe9487b371cf")
+//					.addParam("username", "E41414005")
+//					.build();
+//			AnsyCall call = new AnsyCall(request);
+//			
+//			call.setListener(new Listener(){
+//				@Override
+//				public void Upload(int i) {
+//					//这个接口提供上传时的进度(0-100 百分比进度)，方便开发者调用,当然不设置也可以
+//				}
+//				
+//				
+//			});
+//			
+//			//加入队列
+//			call.enqueue(callBack);
 			
 
 			//普通的get
