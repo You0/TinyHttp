@@ -1,23 +1,31 @@
 package cache;
 
 
+import java.io.File;
+
 import http.body.Response;
+import util.FileUtils;
 
 
 
 public class CacheManager {
-
+	private static File cacheDir = new File("C:\\");
 	private static RuntimeCache runtimeCache = RuntimeCache.getInstance();
-	private static DiskCache diskCache = null;
+	private static DiskCache diskCache = new DiskCache(cacheDir, new FileUtils(), 30*1024*1024);
+	
+	
+	public static void setCacheDir(File cacheDir) {
+		CacheManager.cacheDir = cacheDir;
+	}
 	
 	
 	public static boolean set(String hash,Response response){
 		if(runtimeCache!=null){
 			runtimeCache.set(hash, response);
 		}
-		//TODO
+
 		if(diskCache!=null){
-			
+			diskCache.put(response,hash);
 		}
 		return true;
 	}
