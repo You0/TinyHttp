@@ -78,12 +78,6 @@ public class DiskCache {
 	
 	
 	public File get(String filename){
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		};
 		Log.E("¼ìË÷´ÅÅÌ»º´æ");
 		for(Entry<File, Long> file : lastUsageDates.entrySet()){
 			if(file.getKey().getName().equals(filename)){

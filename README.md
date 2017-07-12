@@ -4,6 +4,8 @@
 
 一个Http Client，在底层复用socket，手动拼接HTTP请求，支持多线程和缓存。
 
+暂不支持Trunked编码模式的response。
+暂不支持代理
 
 
 # 使用例子：

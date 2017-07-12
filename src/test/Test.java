@@ -16,14 +16,14 @@ public class Test {
 			@Override
 			public void Success(Response response) {
 				// TODO Auto-generated method stub
-				FileUtils fileUtils = new FileUtils();
-				fileUtils.CreateFile(new File("D:\\cache"), response.getData(), "ddd.jpg");
-//				try {
-//					System.out.println(response.string("utf-8"));
-//				} catch (Exception e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
+//				FileUtils fileUtils = new FileUtils();
+//				fileUtils.CreateFile(new File("D:\\cache"), response.getData(), "ddd.jpg");
+				try {
+					System.out.println(response.string("utf-8"));
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				System.out.println("访问成功");
 			}
 			
@@ -58,11 +58,25 @@ public class Test {
 			
 
 			//普通的get
+//			Request request2 = new Request.Builder()
+//					.get()
+//					.url("http://avatar.csdn.net/0/B/B/1_u010015108.jpg")
+//					.build();
+			
+			
+			String proxyHost = "127.0.0.1";
+			String proxyPort = "1080";
+			System.getProperties().put("socksProxySet","true");
+			System.getProperties().put("socksProxyHost",proxyHost);
+			System.getProperties().put("socksProxyPort",proxyPort); 
+
+			
+			
 			Request request2 = new Request.Builder()
-					.get()
-					.url("http://avatar.csdn.net/0/B/B/1_u010015108.jpg")
-					.build();
-	
+			.get()
+			.url("https://www.javbus5.com/")
+			.build();
+			
 			AnsyCall call0 = new AnsyCall(request2);
 			call0.enqueue(callBack);
 			
