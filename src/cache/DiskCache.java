@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import http.body.Response;
 import util.FileUtils;
+import util.Log;
 
 /**
  * 使用LRU算法进行磁盘缓存 需要由用户指定缓存的目录
@@ -26,7 +27,7 @@ public class DiskCache {
 
 	public DiskCache(File cacheDir, FileUtils util, int limit) {
 		this.cacheDir = cacheDir;
-		cacheSize = new AtomicInteger();
+		cacheSize = new AtomicInteger(0);
 		sizeLimit = 1;
 		fileUtil = util;
 		calculateCacheSizeAndFillMap();
@@ -46,6 +47,7 @@ public class DiskCache {
 					}
 				}
 				cacheSize.set((int) size);
+				Log.E("扫描完成");
 			}
 		}).start();
 	}
@@ -55,6 +57,7 @@ public class DiskCache {
 		long valueSize = file.getTotalSpace();
 		// 获得当前缓存的文件大小
 		int currentCacheSize = cacheSize.get();
+		Log.E("currentCacheSize" + currentCacheSize);
 		// 剩余的缓存空间是否满足缓存文件
 		while (currentCacheSize + valueSize > sizeLimit) {
 			int freedSize = removeNext();
@@ -65,17 +68,30 @@ public class DiskCache {
 				currentCacheSize = cacheSize.addAndGet(-freedSize);
 			}
 		}
+		
 		cacheSize.addAndGet((int) valueSize);
-
+		Long currentTime = System.currentTimeMillis();  
+        file.setLastModified(currentTime);  
+        lastUsageDates.put(file, currentTime);  
+		Log.E("DiskCache 缓存成功");
 	}
 	
 	
 	public File get(String filename){
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		};
+		Log.E("检索磁盘缓存");
 		for(Entry<File, Long> file : lastUsageDates.entrySet()){
 			if(file.getKey().getName().equals(filename)){
+				Log.E("磁盘命中");
 				return file.getKey();
 			}
 		}
+		Log.E("磁盘未命中");
 		return null;
 	}
 	

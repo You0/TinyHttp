@@ -23,7 +23,7 @@ public class FileUtils {
 	{
 		File file = new File(path.getAbsolutePath()+"//"+filename);
 		byte[] bs = ObjectToByte(response);
-		
+		Log.E("FileUtils:"+bs+file.getAbsolutePath());
 		FileOutputStream fos = null;
 		
 		try{
@@ -50,11 +50,27 @@ public class FileUtils {
 	 * data 文件的字节流
 	 * endWith 文件的后缀名
 	 * */
-	public File CreateFile(File path,Byte[] data,String filename)
+	public File CreateFile(File path,byte[] data,String filename)
 	{
-		File file = null;
+		File file = new File(path.getAbsolutePath()+"//"+filename);
+
+		FileOutputStream fos = null;
 		
-		
+		try{
+			fos = new FileOutputStream(file);
+			fos.write(data);
+			fos.flush();
+		}catch (Exception e) {
+			// TODO: handle exception
+		}finally {
+			try {
+				fos.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
 		return file;
 	}
 	

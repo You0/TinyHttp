@@ -7,6 +7,7 @@ import http.body.Request2hex.Listener;
 import http.body.Response;
 import task.AnsyCall;
 import task.Dispatcher.CallBack;
+import util.FileUtils;
 
 public class Test {
 	public static void main(String[] args) {
@@ -15,12 +16,14 @@ public class Test {
 			@Override
 			public void Success(Response response) {
 				// TODO Auto-generated method stub
-				try {
-					System.out.println(response.string("utf-8"));
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				FileUtils fileUtils = new FileUtils();
+				fileUtils.CreateFile(new File("D:\\cache"), response.getData(), "ddd.jpg");
+//				try {
+//					System.out.println(response.string("utf-8"));
+//				} catch (Exception e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
 				System.out.println("∑√Œ ≥…π¶");
 			}
 			
