@@ -13,7 +13,8 @@ import util.Log;
 public class CacheManager {
 	private static File cacheDir = new File("D:\\cache");
 	private static RuntimeCache runtimeCache = RuntimeCache.getInstance();
-	private static DiskCache diskCache = new DiskCache(cacheDir, new FileUtils(), 30*1024*1024);
+	private static DiskCache diskCache; 
+	//= new DiskCache(cacheDir, new FileUtils(), 30*1024*1024);
 	
 	
 	public static void setCacheDir(File cacheDir) {

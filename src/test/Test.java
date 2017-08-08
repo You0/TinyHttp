@@ -64,17 +64,13 @@ public class Test {
 //					.build();
 			
 			
-			String proxyHost = "127.0.0.1";
-			String proxyPort = "1080";
-			System.getProperties().put("socksProxySet","true");
-			System.getProperties().put("socksProxyHost",proxyHost);
-			System.getProperties().put("socksProxyPort",proxyPort); 
+
 
 			
 			
 			Request request2 = new Request.Builder()
 			.get()
-			.url("https://www.javbus5.com/")
+			.url("http://115.159.159.65:8080/Jav/search/last?index=2")
 			.build();
 			
 			AnsyCall call0 = new AnsyCall(request2);
