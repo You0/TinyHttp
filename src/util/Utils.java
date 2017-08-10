@@ -14,13 +14,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.sun.swing.internal.plaf.basic.resources.basic;
 
 import http.body.hex2Response;
+import jdk.internal.dynalink.beans.StaticClass;
 
 /**
  * Created by Me on 2017/5/14.
  */
 
 public class Utils {
-
+	
 	// 线程工厂函数,做一点封装的工作，让他能显示当前是第几次new出的Thread
 	public static ThreadFactory threadFactor(final String name, final boolean daemon) {
 		final AtomicInteger count = new AtomicInteger(0);
@@ -48,7 +49,7 @@ public class Utils {
 		int divive = 0;
 		boolean flag = false;
 		int totalLen = 0;
-
+		Boolean Error = true;
 		while ((len = input.read(bs)) != -1) {
 
 			// 连续2个换行则表示到了数据部分了
@@ -97,9 +98,17 @@ public class Utils {
 			totalLen += len;
 
 			// 表明是chunked模式到结尾了
-			if (contentlen == -1 && ChunkedEnd(bs)) {
-				System.out.println("trunked");
-				break;
+			
+			if (contentlen == -1) {
+				int tag;
+				if((tag=ChunkedEnd(bs))==1){
+					System.out.println("trunked");
+					break;
+				}else if(tag==-1){
+					Error = false;
+					break;
+				}
+				
 			}
 
 			if (totalLen == (headlen + contentlen)) {
@@ -108,9 +117,10 @@ public class Utils {
 		}
 		//System.out.println("trunkedddddd");
 		//System.out.println(new String(outputStream.toByteArray(), "utf-8"));
-
-		if(contentlen==-1){
-			List<Byte> bytes = readGzipBody(parse(outputStream,headlen));
+		
+		if(contentlen==-1 && Error){
+			List<Byte> bytes = readGzipBody(parse(outputStream,headlen),0);
+			System.out.println("递归结束");
 			response.setBodylen(bytes.size());
 			response.setHeadlen(0);
 			byte[] bs2 = new byte[bytes.size()];
@@ -121,7 +131,7 @@ public class Utils {
 		}
 		
 		
-		
+		Error = true;
 		return outputStream.toByteArray();
 	}
 
@@ -140,16 +150,17 @@ public class Utils {
 		return -1;
 	}
 
-	private static boolean ChunkedEnd(byte[] bs) {
+	private static int ChunkedEnd(byte[] bs) {
 		// System.out.println("ChunkedEnd");
 		byte[] Chunkedend = "0\r\n\r\n".getBytes();
 		boolean tag = true;
 		for (int i = 0; i < bs.length; i++) {
 			for (int j = 0; j < Chunkedend.length; j++) {
 
-				if (i + j > bs.length) {
+				if (i + j >= bs.length) {
 					System.out.println("outIndex");
-					break;
+					return 0;
+					
 				}
 				if (bs[i + j] == Chunkedend[j]) {
 					tag = true;
@@ -162,14 +173,18 @@ public class Utils {
 				break;
 			}
 		}
-		// System.out.println("tag"+tag);
-		return tag;
+
+		return tag?1:0;
 	}
 
-	private static List<Byte> readGzipBody(InputStream is) throws IOException {
+	private static List<Byte> readGzipBody(InputStream is,int deep) throws IOException {
 		// 压缩块的大小，由于chunked编码块的前面是一个标识压缩块大小的16进制字符串，在开始读取前，需要获取这个大小
+		
 		int chunk = getChunkSize(is);
 		List<Byte> bodyByteList = new ArrayList<Byte>();
+		if(deep>10){
+			return bodyByteList;
+		}
 		byte readByte = 0;
 		int count = 0;
 
@@ -179,7 +194,7 @@ public class Utils {
 			count++;
 		}
 		if (chunk > 0) { // chunk为读取到最后，如果没有读取到最后，那么接着往下读取。
-			List<Byte> tmpList = readGzipBody(is);
+			List<Byte> tmpList = readGzipBody(is,deep+1);
 			bodyByteList.addAll(tmpList);
 		}
 		

@@ -28,6 +28,10 @@ public class Connection {
     }
     
     
+    public void setUrl(URL url) {
+		this.url = url;
+	}
+    
     public Request2hex getReallyCall() {
 		return reallyCall;
 	}

@@ -4,6 +4,9 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URL;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import Over.OverControl;
 import cache.CacheManager;
 import http.Connection;
@@ -12,7 +15,7 @@ import http.body.Request2hex;
 import http.body.Request2hex.Listener;
 import http.body.Response;
 import http.body.hex2Response;
-
+import socket.SocketPool;
 import task.Dispatcher.CallBack;
 import util.Log;
 import util.MD5;
@@ -68,6 +71,7 @@ public class AnsyCall implements Runnable{
         		
         	}
         	
+        	connection.setUrl(url);
         	Request2hex reallyCall = new Request2hex(connection, request);
         	
         	if(listener!=null){
@@ -88,7 +92,6 @@ public class AnsyCall implements Runnable{
         	}
         	
         	
-        	
         	reallyCall.connect();
         	
         	
@@ -103,14 +106,22 @@ public class AnsyCall implements Runnable{
         	
         	
         }catch (Exception e){
+        	e.printStackTrace();
             //这里抛出的异常是socket连接时造成的异常。
         	//回调callback的error方法。的
         	callBack.Error(new Response());
+        	System.out.println("错误，");
+        	//当出现错误的时候直接去除掉复用的socket，重新建立socket
+        	Dispatcher.getInstance().remove(connection);;
+        	connection = null;
 
         }finally {
             //一定要调用finish方法开始把下一个任务加入到线程池中。
-        	connection.setIdelTime();
-            OverControl.release(connection);
+        	if(connection!=null){
+        		connection.setIdelTime();
+                OverControl.release(connection);
+        	}
+        	
             Log.E("finally");
             Log.E("当前connection使用完毕，待释放"+connection.isUsing());
             Dispatcher.getInstance().finish();

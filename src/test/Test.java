@@ -66,15 +66,25 @@ public class Test {
 			
 
 
+			for(int i=9;i<=9;i++){
+				String url = "http://115.159.159.65:8080/Jav/search/last?index="+i;
+				Request request2 = new Request.Builder()
+						.get()
+						.url(url)
+						.build();
+				
+				AnsyCall call0 = new AnsyCall(request2);
+				if(i==100){
+					System.out.println("");
+				}
+				call0.enqueue(callBack);
+				Thread.sleep(1500);
+				
+			}
 			
 			
-			Request request2 = new Request.Builder()
-			.get()
-			.url("http://115.159.159.65:8080/Jav/search/last?index=2")
-			.build();
 			
-			AnsyCall call0 = new AnsyCall(request2);
-			call0.enqueue(callBack);
+			
 			
 			
 			//不放入队列的话则是同步的

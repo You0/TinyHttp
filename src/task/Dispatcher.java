@@ -8,6 +8,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import http.Connection;
 import http.body.Response;
 import socket.SocketPool;
 import util.Log;
@@ -28,7 +29,7 @@ public class Dispatcher {
     //当前正在运行的task
     private volatile AtomicInteger runningTasks = new AtomicInteger(0);
     //初始化socket管理池，其任务是清除空闲的socket
-    public SocketPool socketPool = new SocketPool(5*1000,5);
+    public SocketPool socketPool = new SocketPool(10*1000,5);
 
 
     //真正进行http数据发送的连接池
@@ -72,6 +73,14 @@ public class Dispatcher {
         }
     }
 
+    
+    public void remove(Connection connection){
+    	socketPool.mLinkedList.remove(connection);
+    	connection.release();
+    	connection = null;
+    	runningTasks.addAndGet(-1);
+    }
+    
 
     //异步任务完成之后将调用的回调任务。
     public interface CallBack{
