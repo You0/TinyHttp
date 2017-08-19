@@ -65,7 +65,7 @@ public class Utils {
 								stringBuilder.append((char) (CurrentLine.get(j).byteValue()));
 							}
 							String line = stringBuilder.toString();
-							Log.E(line);
+							//Log.E(line);
 							// 将http头保存到list里，不需要再自己解析
 							headerStr.add(line);
 							if (contentlen == -1) {
@@ -102,7 +102,7 @@ public class Utils {
 			if (contentlen == -1) {
 				int tag;
 				if((tag=ChunkedEnd(bs))==1){
-					System.out.println("trunked");
+					//System.out.println("trunked");
 					break;
 				}else if(tag==-1){
 					Error = false;
@@ -120,7 +120,7 @@ public class Utils {
 		
 		if(contentlen==-1 && Error){
 			List<Byte> bytes = readGzipBody(parse(outputStream,headlen),0);
-			System.out.println("递归结束");
+			//List<Byte> bytes = new ArrayList<>();
 			response.setBodylen(bytes.size());
 			response.setHeadlen(0);
 			byte[] bs2 = new byte[bytes.size()];
@@ -128,11 +128,17 @@ public class Utils {
 				bs2[i] = bytes.get(i);
 			}
 			return bs2;
+			
 		}
 		
 		
 		Error = true;
-		return outputStream.toByteArray();
+		try{
+			return outputStream.toByteArray();
+		}finally {
+			outputStream.close();
+		}
+		
 	}
 
 	public static int findContentLength(String line) {
@@ -158,7 +164,7 @@ public class Utils {
 			for (int j = 0; j < Chunkedend.length; j++) {
 
 				if (i + j >= bs.length) {
-					System.out.println("outIndex");
+					//System.out.println("outIndex");
 					return 0;
 					
 				}
@@ -182,7 +188,8 @@ public class Utils {
 		
 		int chunk = getChunkSize(is);
 		List<Byte> bodyByteList = new ArrayList<Byte>();
-		if(deep>10){
+		if(deep>2){
+			is.close();
 			return bodyByteList;
 		}
 		byte readByte = 0;
@@ -196,8 +203,9 @@ public class Utils {
 		if (chunk > 0) { // chunk为读取到最后，如果没有读取到最后，那么接着往下读取。
 			List<Byte> tmpList = readGzipBody(is,deep+1);
 			bodyByteList.addAll(tmpList);
+		}else{
+			is.close();
 		}
-		
 		return bodyByteList;
 	}
 
@@ -221,8 +229,14 @@ public class Utils {
 		ArrayList<Byte> CurrentLine = new ArrayList<>();
 		byte cb;
 		try {
-			while((cb=(byte) is.read())!=patter[0]){
+			while(true){
+				if((cb=(byte) is.read())==patter[0] ||cb==patter[1] ||cb==-1){
+					break;
+				}
 				CurrentLine.add(cb);
+				if(CurrentLine.size()>100){
+					break;
+				}
 			}
 			is.read();
 		} catch (IOException e) {
@@ -240,7 +254,7 @@ public class Utils {
 
 	public static ByteArrayInputStream parse(OutputStream out,int headlen)
     {
-        ByteArrayOutputStream   baos=new   ByteArrayOutputStream();
+        ByteArrayOutputStream baos;
         baos=(ByteArrayOutputStream) out;
         ByteArrayInputStream swapStream = new ByteArrayInputStream(baos.toByteArray());
         

@@ -137,7 +137,7 @@ public class Request2hex {
         			": " + current.getValue() + "\r\n");
         }
         
-        Log.E(httpHeader.toString());
+        //Log.E(httpHeader.toString());
         //这个/r/n表示消息头结束，否则服务器会一直阻塞在那里不会将结果返回。
         httpHeader.append("\r\n");
         //将Http头写入socket，发起http请求

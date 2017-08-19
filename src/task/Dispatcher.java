@@ -56,20 +56,20 @@ public class Dispatcher {
             runningTasks.addAndGet(1);
             executorService.submit(task);
         }else{
-        	Log.E(runningTasks.get());
         	Log.E("并发池已满，放入缓冲队列中");
             Dequeue.add(task);
         }
     }
 
     //将任务队列中的内容放入到线程池中去
-    public void finish(){
+    public synchronized void finish(){
         runningTasks.addAndGet(-1);
         if(!Dequeue.isEmpty()){
         	AnsyCall call = Dequeue.getFirst();
             Dequeue.removeFirst();
             executorService.submit(call);
             runningTasks.addAndGet(1);
+            Log.E("still has" + runningTasks.get() + "dequeue size "+ Dequeue.size());
         }
     }
 

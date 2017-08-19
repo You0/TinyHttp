@@ -24,7 +24,7 @@ public class AnsyCall implements Runnable{
     private CallBack callBack;
     private Request request;
     private Listener listener;
-    
+    private static int count = 0;
     public AnsyCall(Request request){
         this.request = request;
     }
@@ -67,8 +67,10 @@ public class AnsyCall implements Runnable{
         		
         		connection = new Connection(socket,url);
         		connection.isUsing = true;
-        		Dispatcher.getInstance().socketPool.addConnection(connection);
         		
+        		
+        		Dispatcher.getInstance().socketPool.addConnection(connection);
+        			
         	}
         	
         	connection.setUrl(url);
@@ -83,7 +85,7 @@ public class AnsyCall implements Runnable{
         	
         	//这里在建立reallyCall之后，进一步判断是否可以进行缓存，如果有缓存的话，直接就返回缓存。
         	String hash = MD5.getMD5(connection.getUrl().toString());
-        	Log.E(hash);
+        	//Log.E(hash);
         	Response cache = CacheManager.get(hash);
         	if(cache != null){
         		Log.E("命中成功!");
@@ -112,19 +114,19 @@ public class AnsyCall implements Runnable{
         	callBack.Error(new Response());
         	System.out.println("错误，");
         	//当出现错误的时候直接去除掉复用的socket，重新建立socket
-        	Dispatcher.getInstance().remove(connection);;
+        	Dispatcher.getInstance().socketPool.removeAll();
         	connection = null;
 
         }finally {
             //一定要调用finish方法开始把下一个任务加入到线程池中。
+        	
         	if(connection!=null){
         		connection.setIdelTime();
                 OverControl.release(connection);
         	}
-        	
-            Log.E("finally");
+        	Dispatcher.getInstance().finish();
+            //Log.E("finally");
             Log.E("当前connection使用完毕，待释放"+connection.isUsing());
-            Dispatcher.getInstance().finish();
             
         }
 

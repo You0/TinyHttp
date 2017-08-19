@@ -26,7 +26,7 @@ public class SocketPool {
 
     //用来管理socket连接的任务池， 运行清理任务，一般来说是个单任务线程，考虑到扩展就使用线程池
     //因为线程池的开销好像并不大。
-    private static final Executor mExecutor = new ThreadPoolExecutor(1,Integer.MAX_VALUE,
+    private static final Executor mExecutor = new ThreadPoolExecutor(1,1,
             60, TimeUnit.SECONDS,new SynchronousQueue<Runnable>(),
             Utils.threadFactor("socket Pool",false));
 
@@ -99,8 +99,14 @@ public class SocketPool {
     {
         //对已经存在的URL进行遍历找出是否已经存在
         for(int i=0;i<mLinkedList.size();i++){
-        	Log.E(mLinkedList.get(i).getAddr().toString()+mLinkedList.get(i).getPort()+
-        			mLinkedList.get(i).isUsing);
+        	if(mLinkedList.get(i)==null){
+        		continue;
+        	}else if(mLinkedList.get(i).getAddr()==null){
+        		mLinkedList.get(i).isUsing = false;
+        		continue;
+        	}
+        	//Log.E(mLinkedList.get(i).getAddr().toString()+mLinkedList.get(i).getPort()+
+        	//		mLinkedList.get(i).isUsing);
             if(mLinkedList.get(i).getAddr().toString().equals(addr)
                     &&mLinkedList.get(i).getPort()==port){
                 //将connection返回复用。
@@ -175,6 +181,17 @@ public class SocketPool {
         //return -1;
     }
 
+    
+    public void removeAll()
+    {
+    	for(int i=0;i<mLinkedList.size();i++){
+    		Connection connection = mLinkedList.get(i);
+    		connection.release();
+    		connection = null;
+    	}
+    	mLinkedList.clear();
+    }
+    
 
 }
 

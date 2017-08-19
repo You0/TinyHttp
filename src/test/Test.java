@@ -24,7 +24,7 @@ public class Test {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				System.out.println("访问成功");
+				//System.out.println("访问成功");
 			}
 			
 			@Override
@@ -66,19 +66,18 @@ public class Test {
 			
 
 
-			for(int i=9;i<=9;i++){
-				String url = "http://115.159.159.65:8080/Jav/search/last?index="+i;
+			for(int i=1;i<=1;i++){
+				String url = "http://115.159.159.65:8080/Jav/search/group?index=1&order=-1&type= アイデアポケット";
 				Request request2 = new Request.Builder()
 						.get()
 						.url(url)
 						.build();
 				
 				AnsyCall call0 = new AnsyCall(request2);
-				if(i==100){
-					System.out.println("");
-				}
+				
+				
 				call0.enqueue(callBack);
-				Thread.sleep(1500);
+				
 				
 			}
 			
