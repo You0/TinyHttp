@@ -3,8 +3,8 @@
 一个小型的http库。作者慢慢完善中。。。
 
 一个Http Client，在底层复用socket，手动拼接HTTP请求，支持多线程和缓存。
+支持Trunked编码模式的response。
 
-暂不支持Trunked编码模式的response。
 暂不支持代理
 暂不支持HTTPS
 。。。。。。。。
